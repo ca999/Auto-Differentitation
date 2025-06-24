@@ -45,6 +45,27 @@ class DualNumber:
     def __rmul__(self, other):
         return self.__mul(other)
 
+    def __div(self, other, self_numerator=True):
+        if self_numerator and isinstance(other, DualNumber):
+            if other.real == 0:
+                raise ZeroDivisionError("Division by 0")
+            else:
+                real = self.real/other.real
+                dual = -1*(self.dual*other.real - self.real*other.dual)/(other.real*other.real)
+                return DualNumber(real, dual)
+        elif self_numerator and isinstance(other, Number):
+            if other == 0:
+                raise ZeroDivisionError("Division by 0")
+            else:
+                return DualNumber(self.real/other, self.dual/other)
+        elif not self_numerator and isinstance(other, Number):
+            if self.real == 0:
+                raise ZeroDivisionError("Division by 0")
+            else:
+                return DualNumber(other / self.real, -1 * (other * self.dual) / self.real ** 2)
+        else:
+            raise TypeError("Unsupported Type for __div__")
+
 
 if __name__ == '__main__':
     x = DualNumber(9,10)
