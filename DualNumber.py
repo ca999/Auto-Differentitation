@@ -31,9 +31,20 @@ class DualNumber:
     def __rsub__(self, other):
         return self._sub(other, self_first=False)
 
-    def _mul(self, other):
+    def __mul(self, other):
+        if isinstance(other, DualNumber):
+            return DualNumber(self.real * other.real, self.real*other.dual+other.real*self.dual)
+        elif isinstance(other, Number):
+            return DualNumber(self.real * other,  self.dual * other)
+        else:
+            raise TypeError("Unsupported Type for __add__")
 
     def __mul__(self, other):
+        return self.__mul(other)
+
+    def __rmul__(self, other):
+        return self.__mul(other)
+
 
 if __name__ == '__main__':
     x = DualNumber(9,10)
