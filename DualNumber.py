@@ -1,4 +1,5 @@
 from numbers import Number
+from math import log
 
 
 class DualNumber:
@@ -66,10 +67,39 @@ class DualNumber:
         else:
             raise TypeError("Unsupported Type for __div__")
 
+    def __truediv__(self, other):
+        return self.__div(other)
+
+    def __rtruediv__(self, other):
+        return self.__div(other, self_numerator=False)
+
+    def _pow(self, other, self_base=True):
+        if self_base and isinstance(other, Number):
+            return DualNumber(self.real ** other, self.dual * other * (self.real ** (other - 1)))
+        elif self_base and isinstance(other, DualNumber):
+            new_real = self.real ** other.real
+            new_dual = (self.real ** (other.real - 1)) * (
+                        self.real * other.dual * log(self.real) + other.real * self.dual)
+            return DualNumber(new_real, new_dual)
+        elif not self_base and isinstance(other, Number):
+            return DualNumber(other ** self.real, (other ** self.real) * self.dual * log(other))
+        else:
+            raise TypeError("Unsupported Type for __pow__")
+
+    def __pow__(self, other):
+        return self._pow(other)
+
+    def __rpow__(self, other):
+        return self._pow(other, self_base=False)
+
+    def __repr__(self):
+        return "%s %s %sɛ" % (self.real, '+' if self.dual > 0 else '-', abs(self.dual))
+
 
 if __name__ == '__main__':
     x = DualNumber(9,10)
     y = DualNumber(11, 10)
     print(x+y)
-    print(x+1)
-    print(4+y)
+    print(x/y)
+    print(x*y)
+    print(x**y)
