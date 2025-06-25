@@ -1,5 +1,6 @@
 from numbers import Number
 from math import log
+import math as rmath
 
 
 class DualNumber:
@@ -85,6 +86,13 @@ class DualNumber:
             return DualNumber(other ** self.real, (other ** self.real) * self.dual * log(other))
         else:
             raise TypeError("Unsupported Type for __pow__")
+
+    def sin(x):
+        if isinstance(x, DualNumber):
+            return DualNumber(rmath.sin(x.real), rmath.cos(x.real) * x.dual)
+        else:
+            return rmath.sin(x)
+
 
     def __pow__(self, other):
         return self._pow(other)
